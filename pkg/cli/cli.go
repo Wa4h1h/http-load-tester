@@ -19,16 +19,15 @@ func ParseFlags(cmd string, args ...string) {
 	switch cmd {
 	case "bulk":
 		bulkFlagSet := flag.NewFlagSet("bulk", flag.ContinueOnError)
-		bulkFlagSet.StringVar(&file, "f", "", "path to yaml file containing the urls configuration")
 
 		bulkFlagSet.Usage = func() {
 			fmt.Println("Options:")
 			bulkFlagSet.PrintDefaults()
 		}
 
-		if err := bulkFlagSet.Parse(args); err != nil {
-			fmt.Println(err.Error())
+		bulkFlagSet.StringVar(&file, "f", "", "path to yaml file containing the urls configuration")
 
+		if err := bulkFlagSet.Parse(args); err != nil {
 			return
 		}
 
