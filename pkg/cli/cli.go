@@ -32,6 +32,12 @@ func ParseFlags(cmd string, args ...string) {
 			return
 		}
 
+		if file == "" {
+			bulkFlagSet.Usage()
+
+			return
+		}
+
 		executeFromFile()
 	default:
 		flag.Usage = func() {
