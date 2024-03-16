@@ -79,7 +79,7 @@ Use hload <command> -h or --help for more information about a command.`, "\n")
 	execute(&Request{
 		URL:     url,
 		Method:  method,
-		Timeout: timeout,
+		Timeout: &timeout,
 		Headers: H,
 		Body:    body,
 	})
@@ -140,8 +140,8 @@ func executeFromFile() {
 			req.URL = fmt.Sprintf("%s%s", input.Base, req.URL)
 		}
 
-		if input.Timeout != nil {
-			req.Timeout = *input.Timeout
+		if input.Timeout != nil && req.Timeout == nil {
+			req.Timeout = input.Timeout
 		}
 	}
 
@@ -153,7 +153,7 @@ func executeFromFile() {
 }
 
 func execute(req *Request) {
-	resp, err := http.Do(req.URL, req.Method, req.Headers, req.Body, req.Timeout)
+	resp, err := http.Do(req.URL, req.Method, req.Headers, req.Body, *req.Timeout)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			fmt.Println(fmt.Sprintf("http request to %s timed out", req.URL))

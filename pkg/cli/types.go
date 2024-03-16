@@ -10,7 +10,7 @@ type Expected struct {
 type Request struct {
 	Expected *Expected `yaml:"expected"`
 	Headers  []string  `yaml:"headers,omitempty"`
-	Timeout  float64   `yaml:"timeout"`
+	Timeout  *float64  `yaml:"timeout"`
 	Name     string    `yaml:"name"`
 	URL      string    `yaml:"url"`
 	Method   string    `yaml:"method"`
