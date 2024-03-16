@@ -140,8 +140,13 @@ func executeFromFile() {
 			req.URL = fmt.Sprintf("%s%s", input.Base, req.URL)
 		}
 
-		if input.Timeout != nil && req.Timeout == nil {
-			req.Timeout = input.Timeout
+		if req.Timeout == nil {
+			if input.Timeout != nil {
+				req.Timeout = input.Timeout
+			} else {
+				req.Timeout = new(float64)
+				*req.Timeout = 0
+			}
 		}
 	}
 
