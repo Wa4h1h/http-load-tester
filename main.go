@@ -14,5 +14,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	cli.ParseFlags(os.Args[1], os.Args[2:]...)
+	cli.Run(os.Args[1], os.Args[2:]...)
 }

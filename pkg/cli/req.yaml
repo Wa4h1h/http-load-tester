@@ -1,0 +1,23 @@
+concurrency: 10
+base: http://localhost:8080
+timeout: 5
+iterations: 5
+schema:
+  requests:
+    - name: test
+      url: http://eu.httpbin.org/get
+      method: GET
+      headers:
+        - X-Forward-For:127.0.01
+        - Authorization:bearer eykdfg
+      expected:
+        status: 200
+        body: "{x:10}"
+    - name: test-2
+      url: http://localhost:8080/api
+      method: GET
+      headers:
+        - X-Forward-For:127.0.01.56
+      expected:
+        status: 200
+        body: "{x:10}"
