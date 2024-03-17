@@ -77,13 +77,13 @@ Use hload <command> -h or --help for more information about a command.`, "\n")
 	}
 
 	for i := 0; i < iterations; i++ {
-		execute(&Request{
+		execute([]*Request{{
 			URL:     url,
 			Method:  method,
 			Timeout: &timeout,
 			Headers: H,
 			Body:    body,
-		})
+		}})
 	}
 }
 
@@ -153,23 +153,23 @@ func executeFromFile() {
 	}
 
 	for i := 0; i < input.Iterations; i++ {
-		for _, req := range schema.Requests {
-			execute(req)
-		}
+		execute(schema.Requests)
 	}
 }
 
-func execute(req *Request) {
-	resp, err := http.Do(req.URL, req.Method, req.Headers, req.Body, *req.Timeout)
-	if err != nil {
-		if errors.Is(err, context.DeadlineExceeded) {
-			fmt.Println(fmt.Sprintf("http request to %s timed out", req.URL))
-		} else {
-			fmt.Println(err.Error())
+func execute(reqs []*Request) {
+	for _, req := range reqs {
+		resp, err := http.Do(req.URL, req.Method, req.Headers, req.Body, *req.Timeout)
+		if err != nil {
+			if errors.Is(err, context.DeadlineExceeded) {
+				fmt.Println(fmt.Sprintf("http request to %s timed out", req.URL))
+			} else {
+				fmt.Println(err.Error())
+			}
+
+			return
 		}
 
-		return
+		fmt.Println(req.Name, req.URL, resp.Status, fmt.Sprintf("%dms", resp.Time))
 	}
-
-	fmt.Println(req.Name, req.URL, resp.Status, fmt.Sprintf("%dms", resp.Time))
 }
