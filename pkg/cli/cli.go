@@ -35,7 +35,7 @@ func runBulk(args ...string) {
 		bulkFlagSet.PrintDefaults()
 	}
 
-	bulkFlagSet.StringVar(&file, "f", "", "path to yaml file containing the urls configuration")
+	bulkFlagSet.StringVar(&file, "f", "", "path to yaml file containing the urls configurations")
 
 	if err := bulkFlagSet.Parse(args); err != nil {
 		return
@@ -56,7 +56,7 @@ func runSimple() {
 Commands:
 	bulk	perform http load test on different urls from a file
 
-Use hload <command> -h or --help for more information about a command.`, "\n")
+Use hload <command> -h or --help for more information about a command.`)
 		fmt.Println("Options:")
 		flag.PrintDefaults()
 	}
@@ -147,7 +147,7 @@ func executeFromFile() {
 				req.Timeout = input.Timeout
 			} else {
 				req.Timeout = new(float64)
-				*req.Timeout = 0
+				*req.Timeout = defaultTimeout
 			}
 		}
 	}
