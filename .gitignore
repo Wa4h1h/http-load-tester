@@ -25,3 +25,6 @@ go.work
 
 # Macos
 .DS_Store
+
+# hload
+req.yaml
