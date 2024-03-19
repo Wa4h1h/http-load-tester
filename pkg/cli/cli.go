@@ -75,15 +75,19 @@ Use hload <command> -h or --help for more information about a command.`)
 		return
 	}
 
-	/*for i := 0; i < iterations; i++ {
-		execute([]*Request{{
-			URL:     url,
-			Method:  method,
-			Timeout: &timeout,
-			Headers: H,
-			Body:    body,
-		}})
-	}*/
+	processInput(&Input{
+		Concurrency: &concurrent,
+		Iterations:  iterations,
+		Schema: &Schema{
+			Requests: []*Request{{
+				URL:     url,
+				Method:  method,
+				Timeout: &timeout,
+				Headers: H,
+				Body:    body,
+			}},
+		},
+	})
 }
 
 func Run(cmd string, args ...string) {
@@ -154,6 +158,10 @@ func executeFromFile() {
 		}
 	}
 
+	processInput(&input)
+}
+
+func processInput(input *Input) {
 	results := make(chan *stats, input.Iterations)
 	workers := make(chan *Schema, *input.Concurrency)
 	// s := new(stats)
