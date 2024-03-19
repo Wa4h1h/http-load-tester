@@ -13,17 +13,13 @@ func main() {
 	go func() {
 		mux := http.NewServeMux()
 		mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			fmt.Printf("server: %s /\n", r.Method)
-
-			fmt.Println(r.Header)
+			fmt.Printf("server: %s  \n", r.Method)
 
 			fmt.Fprintf(w, "responded to / request")
 		})
 
 		mux.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
-			fmt.Printf("server: %s /\n", r.Method)
-
-			fmt.Println(r.Header)
+			fmt.Printf("server: %s /api \n", r.Method)
 
 			fmt.Fprintf(w, "responded to /api request")
 		})

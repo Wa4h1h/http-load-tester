@@ -9,11 +9,8 @@ import (
 	"os"
 
 	"github.com/Wa4h1h/http-load-tester/pkg/http"
-
 	"gopkg.in/yaml.v3"
 )
-
-var H headerFlag
 
 const defaultTimeout float64 = 5
 
@@ -21,6 +18,7 @@ var (
 	url        string
 	method     string
 	body       string
+	H          headerFlag
 	timeout    float64
 	file       string
 	iterations int
@@ -42,6 +40,7 @@ func runBulk(args ...string) {
 	}
 
 	if file == "" {
+		fmt.Println("Usage: hload bulk [options]")
 		bulkFlagSet.Usage()
 
 		return
@@ -54,7 +53,7 @@ func runSimple() {
 	flag.Usage = func() {
 		fmt.Println(`Usage: hload [<command>] [options]
 Commands:
-	bulk	perform http load test on different urls from a file
+bulk	perform http load test on different urls from a file
 
 Use hload <command> -h or --help for more information about a command.`)
 		fmt.Println("Options:")
@@ -76,7 +75,7 @@ Use hload <command> -h or --help for more information about a command.`)
 		return
 	}
 
-	for i := 0; i < iterations; i++ {
+	/*for i := 0; i < iterations; i++ {
 		execute([]*Request{{
 			URL:     url,
 			Method:  method,
@@ -84,7 +83,7 @@ Use hload <command> -h or --help for more information about a command.`)
 			Headers: H,
 			Body:    body,
 		}})
-	}
+	}*/
 }
 
 func Run(cmd string, args ...string) {
@@ -129,15 +128,18 @@ func executeFromFile() {
 		return
 	}
 
-	schema := input.Schema
-
-	if schema == nil {
+	if input.Schema == nil {
 		fmt.Println("schema is missing from ", file)
 
 		return
 	}
 
-	for _, req := range schema.Requests {
+	if input.Concurrency == nil {
+		input.Concurrency = new(int)
+		*input.Concurrency = 1
+	}
+
+	for _, req := range input.Schema.Requests {
 		if len(input.Base) > 0 {
 			req.URL = fmt.Sprintf("%s%s", input.Base, req.URL)
 		}
@@ -152,13 +154,34 @@ func executeFromFile() {
 		}
 	}
 
-	for i := 0; i < input.Iterations; i++ {
-		execute(schema.Requests)
+	results := make(chan *stats, input.Iterations)
+	workers := make(chan *Schema, *input.Concurrency)
+	// s := new(stats)
+
+	defer func() {
+		close(results)
+		close(workers)
+	}()
+
+	go func(workers chan<- *Schema) {
+		for range input.Iterations {
+			workers <- input.Schema
+		}
+	}(workers)
+
+	go func(workers <-chan *Schema, results chan<- *stats) {
+		for work := range workers {
+			go execute(work, results)
+		}
+	}(workers, results)
+
+	for range input.Iterations {
+		<-results
 	}
 }
 
-func execute(reqs []*Request) {
-	for _, req := range reqs {
+func execute(schema *Schema, results chan<- *stats) {
+	for _, req := range schema.Requests {
 		resp, err := http.Do(req.URL, req.Method, req.Headers, req.Body, *req.Timeout)
 		if err != nil {
 			if errors.Is(err, context.DeadlineExceeded) {
@@ -172,4 +195,6 @@ func execute(reqs []*Request) {
 
 		fmt.Println(req.Name, req.URL, resp.Status, fmt.Sprintf("%dms", resp.Time))
 	}
+
+	results <- nil
 }

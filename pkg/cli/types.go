@@ -8,13 +8,12 @@ type Expected struct {
 }
 
 type Request struct {
-	Expected *Expected `yaml:"expected"`
-	Timeout  *float64  `yaml:"timeout,omitempty"`
-	Headers  []string  `yaml:"headers,omitempty"`
-	Name     string    `yaml:"name"`
-	URL      string    `yaml:"url"`
-	Method   string    `yaml:"method"`
-	Body     string    `yaml:"body,omitempty"`
+	Timeout *float64 `yaml:"timeout,omitempty"`
+	Headers []string `yaml:"headers,omitempty"`
+	Name    string   `yaml:"name"`
+	URL     string   `yaml:"url"`
+	Method  string   `yaml:"method"`
+	Body    string   `yaml:"body,omitempty"`
 }
 
 type Schema struct {
@@ -25,7 +24,7 @@ type Input struct {
 	Schema      *Schema  `yaml:"schema"`
 	Timeout     *float64 `yaml:"timeout,omitempty"`
 	Base        string   `yaml:"base,omitempty"`
-	Concurrency int      `yaml:"concurrency"`
+	Concurrency *int     `yaml:"concurrency"`
 	Iterations  int      `yaml:"iterations"`
 }
 
