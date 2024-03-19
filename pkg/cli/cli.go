@@ -190,7 +190,7 @@ func execute(schema *Schema, results chan<- *stats) {
 				fmt.Println(err.Error())
 			}
 
-			return
+			continue
 		}
 
 		fmt.Println(req.Name, req.URL, resp.Status, fmt.Sprintf("%dms", resp.Time))
