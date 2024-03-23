@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 
 	"github.com/Wa4h1h/http-load-tester/pkg/http"
 	"gopkg.in/yaml.v3"
@@ -158,13 +159,31 @@ func executeFromFile() {
 		}
 	}
 
-	processInput(&input)
+	s := processInput(&input)
+
+	printStats(s)
 }
 
-func processInput(input *Input) {
+func printStats(s *stats) {
+	fmt.Println(fmt.Sprintf("\nConcurrency: %d", s.concurrency))
+	fmt.Println(fmt.Sprintf("Total time: %.2fs", float64(s.totalTime)/1000))
+	fmt.Println(fmt.Sprintf("Total sent requests: %d", s.totalRequests))
+	fmt.Println(fmt.Sprintf("Received responses: %d", s.totalRequests-(s.failed+s.timedOut)))
+	fmt.Println(fmt.Sprintf("  ..............2xx: %d", s.httpStats.success))
+	fmt.Println(fmt.Sprintf("  ..............3xx: %d", s.httpStats.redirect))
+	fmt.Println(fmt.Sprintf("  ..............4xx: %d", s.httpStats.clientError))
+	fmt.Println(fmt.Sprintf("  ..............5xx: %d", s.httpStats.serverError))
+	fmt.Println(fmt.Sprintf("  ..............Timed out: %d", s.timedOut))
+	fmt.Println(fmt.Sprintf("Total requests failed to send : %d", s.failed))
+	fmt.Println(fmt.Sprintf("Request per second: %.2f", s.requestsPerSecond))
+	fmt.Println(fmt.Sprintf("(Min, Max, Avg) Request time: %dms, %dms, %.2fms", s.minTime, s.maxTime, s.avgTimePerRequest))
+}
+
+func processInput(input *Input) *stats {
 	results := make(chan *stats, input.Iterations)
 	workers := make(chan *Schema, *input.Concurrency)
-	// s := new(stats)
+	s := new(stats)
+	s.httpStats = new(httpStats)
 
 	defer func() {
 		close(results)
@@ -183,26 +202,59 @@ func processInput(input *Input) {
 		}
 	}(workers, results)
 
+	s.concurrency = *input.Concurrency
+
+	minTimes := make([]int64, 0, input.Iterations)
+	maxTimes := make([]int64, 0, input.Iterations)
+
 	for range input.Iterations {
-		<-results
+		res := <-results
+		s.merge(res)
+		minTimes = append(minTimes, res.minTime)
+		maxTimes = append(maxTimes, res.maxTime)
 	}
+
+	totalRequests := float64(s.totalRequests)
+	totalTime := float64(s.totalTime)
+
+	s.requestsPerSecond = totalRequests / (totalTime / 1000)
+	s.avgTimePerRequest = totalTime / totalRequests
+	s.minTime = slices.Min(minTimes)
+	s.maxTime = slices.Max(maxTimes)
+
+	return s
 }
 
 func execute(schema *Schema, results chan<- *stats) {
+	h := new(httpStats)
+	s := new(stats)
+	times := make([]int64, 0, len(schema.Requests))
+
 	for _, req := range schema.Requests {
 		resp, err := http.Do(req.URL, req.Method, req.Headers, req.Body, *req.Timeout)
 		if err != nil {
 			if errors.Is(err, context.DeadlineExceeded) {
 				fmt.Println(fmt.Sprintf("http request to %s timed out", req.URL))
+				s.timedOut++
 			} else {
 				fmt.Println(err.Error())
+				s.failed++
 			}
 
 			continue
 		}
 
 		fmt.Println(req.Name, req.URL, resp.Status, fmt.Sprintf("%dms", resp.Time))
+
+		h.setStats(resp.Code)
+		s.totalRequests++
+		s.totalTime += resp.Time
+		times = append(times, resp.Time)
 	}
 
-	results <- nil
+	s.httpStats = h
+	s.minTime = slices.Min(times)
+	s.maxTime = slices.Max(times)
+
+	results <- s
 }

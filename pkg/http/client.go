@@ -78,6 +78,7 @@ func Do(url string, method string, headers []string, body string, timeout float6
 	doResp = &DoResponse{
 		Url:    req.URL.RawPath,
 		Status: res.Status,
+		Code:   res.StatusCode,
 		Time:   end.Milliseconds(),
 		Body:   string(bytes),
 	}

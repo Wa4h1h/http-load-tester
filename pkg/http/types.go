@@ -8,6 +8,7 @@ type Header struct {
 type DoResponse struct {
 	Url    string
 	Status string
+	Code   int
 	Body   string
 	Time   int64
 }
