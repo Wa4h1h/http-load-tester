@@ -30,25 +30,25 @@ type Input struct {
 	Iterations  int      `yaml:"iterations"`
 }
 
-type httpStats struct {
-	info        int
-	success     int
-	clientError int
-	redirect    int
-	serverError int
+type HttpStats struct {
+	Info        int
+	Success     int
+	ClientError int
+	Redirect    int
+	ServerError int
 }
 
 type stats struct {
-	httpStats         *httpStats
-	requestsPerSecond float64
-	avgTimePerRequest float64
-	totalTime         int64
-	minTime           int64
-	maxTime           int64
-	concurrency       int
-	totalRequests     int
-	timedOut          int
-	failed            int
+	HttpStats         *HttpStats
+	RequestsPerSecond float64
+	AvgTimePerRequest float64
+	TotalTime         int64
+	MinTime           int64
+	MaxTime           int64
+	Concurrency       int
+	TotalRequests     int
+	TimedOut          int
+	Failed            int
 }
 
 type headerFlag []string
@@ -63,29 +63,29 @@ func (h *headerFlag) Set(value string) error {
 	return nil
 }
 
-func (h *httpStats) setStats(code int) {
+func (h *HttpStats) setStats(code int) {
 	switch {
 	case code >= 100 && code < 200:
-		h.info++
+		h.Info++
 	case code >= 200 && code < 300:
-		h.success++
+		h.Success++
 	case code >= 300 && code < 400:
-		h.redirect++
+		h.Redirect++
 	case code >= 400 && code < 500:
-		h.clientError++
+		h.ClientError++
 	case code >= 500:
-		h.serverError++
+		h.ServerError++
 	}
 }
 
 func (s *stats) merge(s1 *stats) {
-	s.httpStats.info += s1.httpStats.info
-	s.httpStats.success += s1.httpStats.success
-	s.httpStats.redirect += s1.httpStats.redirect
-	s.httpStats.clientError += s1.httpStats.clientError
-	s.httpStats.serverError += s1.httpStats.serverError
-	s.timedOut += s1.timedOut
-	s.failed += s1.failed
-	s.totalTime += s1.totalTime
-	s.totalRequests += s1.totalRequests
+	s.HttpStats.Info += s1.HttpStats.Info
+	s.HttpStats.Success += s1.HttpStats.Success
+	s.HttpStats.Redirect += s1.HttpStats.Redirect
+	s.HttpStats.ClientError += s1.HttpStats.ClientError
+	s.HttpStats.ServerError += s1.HttpStats.ServerError
+	s.TimedOut += s1.TimedOut
+	s.Failed += s1.Failed
+	s.TotalTime += s1.TotalTime
+	s.TotalRequests += s1.TotalRequests
 }
