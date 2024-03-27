@@ -1,0 +1,13 @@
+Concurrency: {{.Concurrency}}
+Total time: {{printf "%.3fs" (intDiv2Point .TotalTime 1000)}}
+Total sent requests: {{.TotalRequests}}
+Received responses: {{sub .TotalRequests (add .Failed .TimedOut) }}
+  ..............1xx: {{.HttpStats.Info}}
+  ..............2xx: {{.HttpStats.Success}}
+  ..............3xx: {{.HttpStats.Redirect}}
+  ..............4xx: {{.HttpStats.ClientError}}
+  ..............5xx: {{.HttpStats.ServerError}}
+  ..............Timed out: {{.TimedOut}}
+Total requests failed to send: {{.Failed}}
+Request per second: {{printf "%.2f" .RequestsPerSecond}}
+(Min, Max, Avg) Request time: {{printf "%dms, %dms, %.2fms" .MinTime .MaxTime .AvgTimePerRequest}}

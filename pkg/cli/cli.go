@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	_ "embed"
 	"errors"
 	"flag"
 	"fmt"
@@ -25,6 +26,8 @@ var (
 	file       string
 	iterations int
 	concurrent int
+	//go:embed results.tmpl
+	results []byte
 )
 
 func runBulk(args ...string) {
@@ -166,34 +169,20 @@ func executeFromFile() {
 }
 
 func printStats(s *stats) {
-	var tmplS string = `Concurrency: {{.Concurrency}}
-Total time: {{printf "%.3fs" (intDiv2Point .TotalTime 1000)}}
-Total sent requests: {{.TotalRequests}}
-Received responses: {{sub2Ints .TotalRequests (add2Ints .Failed .TimedOut) }}
-  ..............1xx: {{.HttpStats.Info}}
-  ..............2xx: {{.HttpStats.Success}}
-  ..............3xx: {{.HttpStats.Redirect}}
-  ..............4xx: {{.HttpStats.ClientError}}
-  ..............5xx: {{.HttpStats.ServerError}}
-  ..............Timed out: {{.TimedOut}}
-Total requests failed to send: {{.Failed}}
-Request per second: {{printf "%.2f" .RequestsPerSecond}}
-(Min, Max, Avg) Request time: {{printf "%dms, %dms, %.2fms" .MinTime .MaxTime .AvgTimePerRequest}}
-`
 	name := "results"
 	funcs := template.FuncMap{
 		"intDiv2Point": func(a int64, b int64) float64 {
 			return float64(a) / float64(b)
 		},
-		"sub2Ints": func(a int, b int) int {
+		"sub": func(a int, b int) int {
 			return a - b
 		},
-		"add2Ints": func(a int, b int) int {
+		"add": func(a int, b int) int {
 			return a + b
 		},
 	}
 
-	tmpl, err := template.New(name).Funcs(funcs).Parse(tmplS)
+	tmpl, err := template.New(name).Funcs(funcs).Parse(string(results))
 	if err != nil {
 		panic(err)
 	}
