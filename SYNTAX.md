@@ -26,6 +26,6 @@ schema:
 &nbsp;&nbsp;`timeout (Optional)`: Local timeout. Only this request must be executed within the timeout\
 &nbsp;&nbsp;`method`: Http method (default GET)\
 &nbsp;&nbsp;`headers`: list key:value pairs\
-&nbsp;&nbsp;`body`: json string body\
+&nbsp;&nbsp;`body`: json string body
 
 
