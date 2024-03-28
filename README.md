@@ -79,7 +79,7 @@ schema:
       url: http://eu.httpbin.org/get
       method: GET
       headers:
-        - X-Forward-For:127.0.01
+        - X-Forward-For:10.3.4.5
 ```
 ## Output example
 ```bash
