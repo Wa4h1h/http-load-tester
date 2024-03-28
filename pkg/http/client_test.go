@@ -51,6 +51,10 @@ func TestDo(t *testing.T) {
 			w.WriteHeader(http.StatusOK)
 		})
 
+		http.HandleFunc("GET /timeout", func(w http.ResponseWriter, r *http.Request) {
+			time.Sleep(time.Duration(5) * time.Second)
+		})
+
 		http.ListenAndServe(":8000", nil)
 	}()
 
@@ -90,6 +94,13 @@ func TestDo(t *testing.T) {
 				},
 				outputError: errors.New("error: calling http url: Get \"not%20known\": unsupported protocol scheme \"\""),
 			},
+			{
+				name: "timeout exceeded",
+				input: &doInput{
+					url: "http://localhost:8000/timeout", method: "GET", timeout: 4,
+				},
+				outputError: errors.New("error: calling http url: Get \"http://localhost:8000/timeout\": context deadline exceeded"),
+			},
 		},
 	}
 
@@ -99,6 +110,7 @@ func TestDo(t *testing.T) {
 
 			res, err := Do(row.input.url, row.input.method, row.input.headers, row.input.body, row.input.timeout)
 			require.NoError(t, err)
+			require.NotNil(t, res)
 
 			assert.Equal(t, row.output.Status, res.Status)
 			assert.Equal(t, row.output.Code, res.Code)
@@ -109,8 +121,10 @@ func TestDo(t *testing.T) {
 		t.Run(row.name, func(t *testing.T) {
 			t.Parallel()
 
-			_, err := Do(row.input.url, row.input.method, row.input.headers, row.input.body, row.input.timeout)
+			res, err := Do(row.input.url, row.input.method, row.input.headers, row.input.body, row.input.timeout)
 			require.Error(t, err)
+			require.Nil(t, res)
+
 			assert.Equal(t, err.Error(), row.outputError.Error())
 		})
 	}
