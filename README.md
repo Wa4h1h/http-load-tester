@@ -46,7 +46,7 @@ Send a request exactly to one endpoint:
 http-load-tester -url=http://eu.httpbin.org/get -i=10 -c=5
 ```
 
-You can alos provide multiple header
+You can also provide multiple header
 ```bash
 http-load-tester -url=http://eu.httpbin.org/get -H=k1:v1 -H=k2:v2 -i=10 -c=10
 ```
