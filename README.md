@@ -6,6 +6,14 @@ CLI tool that can make a high volume of concurrent HTTP(S) request against an we
 go install github.com/Wa4h1h/http-load-tester@latest
 ```
 
+OR
+
+### generate build
+```bash
+make
+```
+
+
 ## Usage
 ```
 Usage: http-load-tester [<command>] [options]

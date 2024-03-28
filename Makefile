@@ -1,5 +1,5 @@
 build: test
-	go build -o hload main.go
+	go build -o http-load-tester main.go
 
 test:
 	go test ./...
