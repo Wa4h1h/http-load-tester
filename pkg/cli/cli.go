@@ -123,7 +123,7 @@ func parseFromFile(input *Input) error {
 	}
 
 	if err := yaml.Unmarshal(bytes, input); err != nil {
-		return fmt.Errorf("error: unmarshalling: %w", errRead)
+		return fmt.Errorf("error: unmarshalling: %w", err)
 	}
 
 	return nil
