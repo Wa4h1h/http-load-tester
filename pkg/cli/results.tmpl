@@ -2,7 +2,7 @@
 Concurrency: {{.Concurrency}}
 Total time: {{printf "%.3fs" (intDiv2Point .TotalTime 1000)}}
 Total sent requests: {{.TotalRequests}}
-Received responses: {{calReceivedResponse }}
+Received responses:
   ..............1xx: {{.HttpStats.Info}}
   ..............2xx: {{.HttpStats.Success}}
   ..............3xx: {{.HttpStats.Redirect}}

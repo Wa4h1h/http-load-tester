@@ -179,20 +179,8 @@ func printStats(s *stats) {
 			if math.IsNaN(a) {
 				return 0
 			}
+
 			return a
-		},
-		"calReceivedResponse": func() int {
-			var resp int
-
-			notSent := s.Failed + s.TimedOut
-
-			if s.TotalRequests > notSent {
-				return s.TotalRequests - notSent
-			} else if s.TotalRequests < notSent && s.TotalRequests > 0 {
-				return (-1) * (s.TotalRequests - notSent)
-			}
-
-			return resp
 		},
 	}
 
@@ -246,6 +234,7 @@ func processInput(input *Input) *stats {
 
 	s.RequestsPerSecond = totalRequests / (totalTime / 1000)
 	s.AvgTimePerRequest = totalTime / totalRequests
+
 	if len(minTimes) > 0 {
 		s.MinTime = slices.Min(minTimes)
 	}
