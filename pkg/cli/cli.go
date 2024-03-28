@@ -81,7 +81,7 @@ Use hload <command> -h or --help for more information about a command.`)
 		return
 	}
 
-	processInput(&Input{
+	s := processInput(&Input{
 		Concurrency: &concurrent,
 		Iterations:  iterations,
 		Schema: &Schema{
@@ -94,6 +94,8 @@ Use hload <command> -h or --help for more information about a command.`)
 			}},
 		},
 	})
+
+	printStats(s)
 }
 
 func Run(cmd string, args ...string) {

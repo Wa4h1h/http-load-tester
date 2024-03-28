@@ -53,6 +53,8 @@ func TestDo(t *testing.T) {
 
 		http.HandleFunc("GET /timeout", func(w http.ResponseWriter, r *http.Request) {
 			time.Sleep(time.Duration(5) * time.Second)
+
+			w.WriteHeader(http.StatusOK)
 		})
 
 		http.ListenAndServe(":8000", nil)

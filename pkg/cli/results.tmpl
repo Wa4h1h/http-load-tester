@@ -10,5 +10,5 @@ Received responses:
   ..............5xx: {{.HttpStats.ServerError}}
   ..............Timed out: {{.TimedOut}}
 Total requests failed to send: {{.Failed}}
-Request per second: {{printf "%.2f" (nanFloat .RequestsPerSecond)}}
+Request per second: {{printf "%.3f" (nanFloat .RequestsPerSecond)}}
 (Min, Max, Avg) Request time: {{printf "%dms, %dms, %.2fms" .MinTime .MaxTime (nanFloat .AvgTimePerRequest)}}
