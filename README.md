@@ -58,6 +58,7 @@ http-load-tester bulk -f=request.yaml
 ```
 
 ## Example urls configuration
+For more details see SYNTAX.md
 ```yaml
 concurrency: 4
 timeout: 5
@@ -70,7 +71,33 @@ schema:
       headers:
         - X-Forward-For:127.0.01
 ```
-For the configuration yaml file syntax see SYNTAX.md
+## Output example
+```bash
+test http://eu.httpbin.org/post 200 OK 211ms
+test http://eu.httpbin.org/post 200 OK 211ms
+test http://eu.httpbin.org/post 200 OK 211ms
+test http://eu.httpbin.org/post 200 OK 220ms
+test http://eu.httpbin.org/post 200 OK 223ms
+test http://eu.httpbin.org/post 200 OK 225ms
+test http://eu.httpbin.org/post 200 OK 227ms
+test http://eu.httpbin.org/post 200 OK 227ms
+test http://eu.httpbin.org/post 200 OK 227ms
+test http://eu.httpbin.org/post 200 OK 933ms
+
+Concurrency: 4
+Total time: 2.915s
+Total sent requests: 10
+Received responses:
+  ..............1xx: 0
+  ..............2xx: 10
+  ..............3xx: 0
+  ..............4xx: 0
+  ..............5xx: 0
+  ..............Timed out: 0
+Total requests failed to send: 0
+Request per second: 3.431
+(Min, Max, Avg) Request time: 211ms, 933ms, 291.50ms
+```
 
 ## Note
 Please be careful not to load test a website that you don’t own/have permission to do so - it will look like, and could become, a denial of service attack!
