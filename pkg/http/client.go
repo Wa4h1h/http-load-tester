@@ -13,9 +13,13 @@ func parseHeaders(headers []string) []*Header {
 	h := make([]*Header, 0, len(headers))
 
 	for _, header := range headers {
-		sHeader := strings.Split(header, ":")
+		key, value, ok := strings.Cut(header, ":")
 
-		h = append(h, &Header{Key: sHeader[0], Value: sHeader[1]})
+		if !ok {
+			continue
+		}
+
+		h = append(h, &Header{Key: key, Value: value})
 	}
 
 	return h
@@ -68,19 +72,11 @@ func Do(url string, method string, headers []string, body string, timeout float6
 		}
 	}()
 
-	var bytes []byte
-
-	bytes, err = io.ReadAll(res.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error: reading response body: %w", err)
-	}
-
 	doResp = &DoResponse{
 		Url:    req.URL.RawPath,
 		Status: res.Status,
 		Code:   res.StatusCode,
 		Time:   end.Milliseconds(),
-		Body:   string(bytes),
 	}
 
 	return doResp, nil

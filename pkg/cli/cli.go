@@ -7,6 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"slices"
 	"text/template"
@@ -174,11 +175,24 @@ func printStats(s *stats) {
 		"intDiv2Point": func(a int64, b int64) float64 {
 			return float64(a) / float64(b)
 		},
-		"sub": func(a int, b int) int {
-			return a - b
+		"nanFloat": func(a float64) float64 {
+			if math.IsNaN(a) {
+				return 0
+			}
+			return a
 		},
-		"add": func(a int, b int) int {
-			return a + b
+		"calReceivedResponse": func() int {
+			var resp int
+
+			notSent := s.Failed + s.TimedOut
+
+			if s.TotalRequests > notSent {
+				return s.TotalRequests - notSent
+			} else if s.TotalRequests < notSent && s.TotalRequests > 0 {
+				return (-1) * (s.TotalRequests - notSent)
+			}
+
+			return resp
 		},
 	}
 
@@ -232,8 +246,13 @@ func processInput(input *Input) *stats {
 
 	s.RequestsPerSecond = totalRequests / (totalTime / 1000)
 	s.AvgTimePerRequest = totalTime / totalRequests
-	s.MinTime = slices.Min(minTimes)
-	s.MaxTime = slices.Max(maxTimes)
+	if len(minTimes) > 0 {
+		s.MinTime = slices.Min(minTimes)
+	}
+
+	if len(maxTimes) > 0 {
+		s.MaxTime = slices.Max(maxTimes)
+	}
 
 	return s
 }
@@ -269,8 +288,10 @@ func execute(schema *Schema, results chan<- *stats) {
 	}
 
 	s.HttpStats = h
-	s.MinTime = slices.Min(times)
-	s.MaxTime = slices.Max(times)
+	if len(times) > 0 {
+		s.MinTime = slices.Min(times)
+		s.MaxTime = slices.Max(times)
+	}
 
 	results <- s
 }
