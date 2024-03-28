@@ -16,6 +16,8 @@ make
 
 ## Usage
 ```
+http-load-tester --help
+
 Usage: http-load-tester [<command>] [options]
 Commands:
 bulk    perform http load test on different urls from a file
