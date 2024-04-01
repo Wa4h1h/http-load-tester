@@ -1,7 +1,8 @@
-# Benchmark syntax
+# Syntax
 ```yaml
 concurrency: integer
 timeout: integer
+base: string
 iterations: integer
 schema:
   requests:
@@ -16,7 +17,9 @@ schema:
 ##### Global settings
 `concurrency`: Number of concurrent iterations. (default: 1)\
 `timeout`: Global timeout: Applied to requests that don't have their own timeout. (default 1s)\
-`iterations`: Number of loops to do (default: 1)\
+`base`: Base URL for all schema requests. Each request URL is appended to the base URL\
+`iterations`: Number of loops to do (default: 1)
+
 
 ##### Schema settings
 `schema`: Wrapper over requests: List of requests\
