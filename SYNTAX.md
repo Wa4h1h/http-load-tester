@@ -12,7 +12,10 @@ schema:
       method: string
       headers:
         - string:string
-      body: "{\"key\":\"value\"}"
+      body: >
+            {
+              "key":"value"
+            }
 ```
 ##### Global settings
 `concurrency`: Number of concurrent iterations. (default: 1)\

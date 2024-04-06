@@ -80,6 +80,13 @@ schema:
       method: GET
       headers:
         - X-Forward-For:10.3.4.5
+    - name: post
+      url: http://eu.httpbin.org/post
+      method: POST
+      body: >
+            {
+              "key":"value"
+            }
 ```
 ## Output example
 ```bash
