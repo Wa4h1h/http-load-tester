@@ -19,7 +19,7 @@ schema:
 ```
 ##### Global settings
 `concurrency`: Number of concurrent iterations. (default: 1)\
-`timeout`: Global timeout: Applied to requests that don't have their own timeout. (default 1s)\
+`timeout`: Global timeout: Applied to requests that don't have their own timeout. (default 0s)\
 `base`: Base URL for all schema requests. Each request URL is appended to the base URL\
 `iterations`: Number of loops to do (default: 1)
 

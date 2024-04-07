@@ -35,7 +35,7 @@ Options:
   -m string
         http method (default "GET")
   -timeout float
-        number of seconds before a http request times out (default 5)
+        number of seconds before a http request times out (default 0)
   -url string
         url to call
 
@@ -90,19 +90,19 @@ schema:
 ```
 ## Output example
 ```bash
-test http://eu.httpbin.org/post 200 OK 211ms
-test http://eu.httpbin.org/post 200 OK 211ms
-test http://eu.httpbin.org/post 200 OK 211ms
-test http://eu.httpbin.org/post 200 OK 220ms
-test http://eu.httpbin.org/post 200 OK 223ms
-test http://eu.httpbin.org/post 200 OK 225ms
-test http://eu.httpbin.org/post 200 OK 227ms
-test http://eu.httpbin.org/post 200 OK 227ms
-test http://eu.httpbin.org/post 200 OK 227ms
-test http://eu.httpbin.org/post 200 OK 933ms
+http://eu.httpbin.org/post 200 OK 228ms
+http://eu.httpbin.org/post 200 OK 229ms
+http://eu.httpbin.org/post 200 OK 231ms
+http://eu.httpbin.org/post 200 OK 232ms
+http://eu.httpbin.org/post 200 OK 235ms
+http://eu.httpbin.org/post 200 OK 237ms
+http://eu.httpbin.org/post 200 OK 240ms
+http://eu.httpbin.org/post 200 OK 242ms
+http://eu.httpbin.org/post 200 OK 340ms
+http://eu.httpbin.org/post 200 OK 380ms
 
-Concurrency: 4
-Total time: 2.915s
+Concurrency: 10
+Total time: 0.382s
 Total sent requests: 10
 Received responses:
   ..............1xx: 0
@@ -112,8 +112,8 @@ Received responses:
   ..............5xx: 0
   ..............Timed out: 0
 Total requests failed to send: 0
-Request per second: 3.431
-(Min, Max, Avg) Request time: 211ms, 933ms, 291.50ms
+Request per second: 10.000
+(Min, Max, Avg) Request time: 228ms, 380ms, 259.40ms
 ```
 
 ## Note
