@@ -29,6 +29,8 @@ func main() {
 			Handler: mux,
 		}
 
+		fmt.Println(server.ReadTimeout, server.WriteTimeout)
+
 		if err := server.ListenAndServe(); err != nil {
 			if !errors.Is(err, http.ErrServerClosed) {
 				fmt.Printf("error running http server: %s\n", err)

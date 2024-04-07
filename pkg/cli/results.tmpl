@@ -1,6 +1,6 @@
 
 Concurrency: {{.Concurrency}}
-Total time: {{printf "%.3fs" (intDiv2Point .TotalTime 1000)}}
+Total time: {{printf "%.3fs" .TotalTime}}
 Total sent requests: {{.TotalRequests}}
 Received responses:
   ..............1xx: {{.HttpStats.Info}}

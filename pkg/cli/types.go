@@ -42,7 +42,7 @@ type stats struct {
 	HttpStats         *HttpStats
 	RequestsPerSecond float64
 	AvgTimePerRequest float64
-	TotalTime         int64
+	TotalTime         float64
 	MinTime           int64
 	MaxTime           int64
 	Concurrency       int
@@ -86,6 +86,5 @@ func (s *stats) merge(s1 *stats) {
 	s.HttpStats.ServerError += s1.HttpStats.ServerError
 	s.TimedOut += s1.TimedOut
 	s.Failed += s1.Failed
-	s.TotalTime += s1.TotalTime
 	s.TotalRequests += s1.TotalRequests
 }

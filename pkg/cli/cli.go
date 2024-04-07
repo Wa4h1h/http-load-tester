@@ -11,6 +11,7 @@ import (
 	"os"
 	"slices"
 	"text/template"
+	"time"
 
 	"github.com/Wa4h1h/http-load-tester/pkg/http"
 	"gopkg.in/yaml.v3"
@@ -221,20 +222,25 @@ func processInput(input *Input) *stats {
 
 	s.Concurrency = *input.Concurrency
 
-	minTimes := make([]int64, 0, input.Iterations)
-	maxTimes := make([]int64, 0, input.Iterations)
+	minTimes := make([]int64, 0)
+	maxTimes := make([]int64, 0)
 
 	for range input.Iterations {
+		start := time.Now()
 		res := <-results
+		end := time.Since(start)
+		s.TotalTime += end.Seconds()
 		s.merge(res)
-		minTimes = append(minTimes, res.MinTime)
+		if res.MinTime > -1 {
+			minTimes = append(minTimes, res.MinTime)
+		}
 		maxTimes = append(maxTimes, res.MaxTime)
 	}
 
 	totalRequests := float64(s.TotalRequests)
-	totalTime := float64(s.TotalTime)
+	totalTime := s.TotalTime
 
-	s.RequestsPerSecond = totalRequests / (totalTime / 1000)
+	s.RequestsPerSecond = totalRequests / totalTime
 	s.AvgTimePerRequest = totalTime / totalRequests
 
 	if len(minTimes) > 0 {
@@ -251,7 +257,7 @@ func processInput(input *Input) *stats {
 func execute(schema *Schema, results chan<- *stats) {
 	h := new(HttpStats)
 	s := new(stats)
-	times := make([]int64, 0, len(schema.Requests))
+	times := make([]int64, 0)
 
 	for _, req := range schema.Requests {
 		resp, err := http.Do(req.URL, req.Method, req.Headers, req.Body, *req.Timeout)
@@ -266,6 +272,8 @@ func execute(schema *Schema, results chan<- *stats) {
 				s.Failed++
 			}
 
+			times = append(times, -1)
+
 			continue
 		}
 
@@ -274,7 +282,6 @@ func execute(schema *Schema, results chan<- *stats) {
 		h.setStats(resp.Code)
 
 		s.TotalRequests++
-		s.TotalTime += resp.Time
 		times = append(times, resp.Time)
 	}
 

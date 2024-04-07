@@ -49,6 +49,8 @@ func Do(url string, method string, headers []string, body string, timeout float6
 		bodyReader = strings.NewReader(body)
 	}
 
+	c := &http.Client{Transport: &http.Transport{DisableKeepAlives: true}}
+
 	req, err = http.NewRequestWithContext(ctx, method, url, bodyReader)
 	if err != nil {
 		return nil, fmt.Errorf("error: creating http requset: %w", err)
@@ -59,7 +61,7 @@ func Do(url string, method string, headers []string, body string, timeout float6
 	}
 
 	start := time.Now()
-	res, err = http.DefaultClient.Do(req)
+	res, err = c.Do(req)
 	end := time.Since(start)
 
 	if err != nil {
