@@ -241,7 +241,7 @@ func processInput(input *Input) *stats {
 	totalTime := s.TotalTime
 
 	s.RequestsPerSecond = totalRequests / totalTime
-	s.AvgTimePerRequest = totalTime / totalRequests
+	s.AvgTimePerRequest = float64(s.Times) / totalRequests
 
 	if len(minTimes) > 0 {
 		s.MinTime = slices.Min(minTimes)
@@ -282,6 +282,7 @@ func execute(schema *Schema, results chan<- *stats) {
 		h.setStats(resp.Code)
 
 		s.TotalRequests++
+		s.Times += resp.Time
 		times = append(times, resp.Time)
 	}
 

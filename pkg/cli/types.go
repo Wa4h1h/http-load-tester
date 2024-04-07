@@ -45,6 +45,7 @@ type stats struct {
 	TotalTime         float64
 	MinTime           int64
 	MaxTime           int64
+	Times             int64
 	Concurrency       int
 	TotalRequests     int
 	TimedOut          int
@@ -87,4 +88,5 @@ func (s *stats) merge(s1 *stats) {
 	s.TimedOut += s1.TimedOut
 	s.Failed += s1.Failed
 	s.TotalRequests += s1.TotalRequests
+	s.Times += s1.Times
 }

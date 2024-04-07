@@ -49,7 +49,10 @@ func Do(url string, method string, headers []string, body string, timeout float6
 		bodyReader = strings.NewReader(body)
 	}
 
-	c := &http.Client{Transport: &http.Transport{DisableKeepAlives: true}}
+	c := &http.Client{Transport: &http.Transport{
+		MaxIdleConns:    100,
+		IdleConnTimeout: 90 * time.Second,
+	}}
 
 	req, err = http.NewRequestWithContext(ctx, method, url, bodyReader)
 	if err != nil {
