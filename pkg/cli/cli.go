@@ -17,7 +17,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const defaultTimeout float64 = 5
+const defaultTimeout float64 = 0
 
 var (
 	url        string

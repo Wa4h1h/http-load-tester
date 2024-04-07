@@ -3,9 +3,14 @@ package main
 import (
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/Wa4h1h/http-load-tester/pkg/cli"
 )
+
+func init() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+}
 
 func main() {
 	if len(os.Args) < 2 {
