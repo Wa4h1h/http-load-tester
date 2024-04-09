@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"math/rand"
 	"os"
 	"slices"
 	"text/template"
@@ -210,6 +211,7 @@ func processInput(input *Input) *stats {
 
 	go func(workers chan<- *Schema) {
 		for range input.Iterations {
+			input.Schema.Requests = mixRequests(input.Schema)
 			workers <- input.Schema
 		}
 	}(workers)
@@ -252,6 +254,17 @@ func processInput(input *Input) *stats {
 	}
 
 	return s
+}
+
+func mixRequests(schema *Schema) []*Request {
+	dst := make([]*Request, len(schema.Requests))
+	perm := rand.Perm(len(schema.Requests))
+
+	for i, v := range perm {
+		dst[v] = schema.Requests[i]
+	}
+
+	return dst
 }
 
 func execute(schema *Schema, results chan<- *stats) {
